@@ -7,7 +7,7 @@ interface JwtPayload {
 }
 
 /**
- * Generates a JWT token for Plumber Manager authentication.
+ * Generates a JWT token for
  * @param jwtPayload - Object containing user ID and role
  * @param secret - JWT secret key
  * @param expiresIn - Token expiration time (e.g., '10d')
@@ -38,9 +38,9 @@ async function generateToken(
 
     // JWT signing options
     const options: SignOptions = {
-      expiresIn,
-      issuer: 'PlumberManager',
-      audience: 'PlumberManagerAPI',
+      expiresIn: expiresIn as any,
+      issuer: 'MentoraApi',
+      audience: 'MentoraStudents',
     };
 
     // Generate token

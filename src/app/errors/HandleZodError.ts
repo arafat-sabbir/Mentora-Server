@@ -10,7 +10,7 @@ import { TErrorSources, TGenericErrorResponse } from '../interface/error';
 const handleZodError = (err: ZodError): TGenericErrorResponse => {
   const statusCode = 400;
   const errorSources: TErrorSources = err.issues.map((issue: ZodIssue) => ({
-    path: issue.path[issue.path.length - 1],
+    path: issue.path[issue.path.length - 1] as any,
     message: issue.message,
   }));
 

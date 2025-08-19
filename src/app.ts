@@ -1,11 +1,10 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import allRoutes from './app/routes';
-import path from "path"
+import path from 'path';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 
 const app: Application = express();
-
 
 // Middleware setup
 
@@ -41,11 +40,10 @@ const requestLogger = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-
 // Middleware setup
 app.use(
   cors({
-    origin: ['http://localhost:5173'],
+    origin: ['http://localhost:3000'],
     credentials: true,
   })
 );
@@ -61,7 +59,7 @@ app.use('/api/v1', allRoutes);
 
 // Test route
 const test = (req: Request, res: Response) => {
-  res.send('Hello NewBie!');
+  res.send('Hello From Mentora Server!');
 };
 app.get('/', test);
 
