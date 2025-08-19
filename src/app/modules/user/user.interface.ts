@@ -1,3 +1,10 @@
 export interface TUser {
-  // Add fields as needed
+  email: string; // unique
+  password: string; // hashed
+  firstName: string;
+  lastName: string;
+  role: 'admin' | 'student';
+  createdAt: Date;
+  updatedAt: Date;
 }
+
