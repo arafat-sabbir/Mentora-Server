@@ -60,6 +60,17 @@ router.put(
   moduleControllers.updateModule
 );
 
+/**
+ * @description Delete Module by ID
+ * @param {string} path - '/api/modules/:id'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Admin)']
+ * @param {function} controller - ['deleteModule']
+ * @returns {object} - router
+ * @access private
+ * @method DELETE
+ */
+router.delete('/:moduleId', AuthorizeRequest(UserRoleEnum.Admin), moduleControllers.deleteModule);
+
 const moduleRoutes = router;
 export default moduleRoutes;
 

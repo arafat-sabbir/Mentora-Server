@@ -16,9 +16,9 @@ const createModule = catchAsync(async (req: Request, res: Response) => {
 
 // Controller function to handle the retrieval of a single module by ID.
 const getSingleModule = catchAsync(async (req: Request, res: Response) => {
-  const { courseId } = req.params;
-  // Call the service method to get the module by courseId and get the result
-  const result = await moduleServices.getModuleById(courseId);
+  const { moduleId } = req.params;
+  // Call the service method to get the module by ID and get the result
+  const result = await moduleServices.getModuleById(moduleId);
   // Send a success response with the retrieved resource data
   sendResponse(res, {
     message: 'Module Retrieved Successfully',
@@ -39,7 +39,7 @@ const getAllModule = catchAsync(async (req: Request, res: Response) => {
 
 const getModuleByCourse = catchAsync(async (req: Request, res: Response) => {
   const { courseId } = req.params;
-  // Call the service method to get the module by ID and get the result
+  // Call the service method to get the module by courseId and get the result
   const result = await moduleServices.getModuleByCourse(courseId);
   // Send a success response with the retrieved resource data
   sendResponse(res, {
@@ -59,11 +59,23 @@ const updateModule = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deleteModule = catchAsync(async (req: Request, res: Response) => {
+  const { moduleId } = req.params;
+  // Call the service method to get the module by ID and get the result
+  const result = await moduleServices.deleteModule(moduleId);
+  // Send a success response with the retrieved resource data
+  sendResponse(res, {
+    message: 'Module Deleted Successfully',
+    data: result,
+  });
+});
+
 export const moduleControllers = {
   createModule,
   getSingleModule,
   getAllModule,
   getModuleByCourse,
   updateModule,
+  deleteModule,
 };
 

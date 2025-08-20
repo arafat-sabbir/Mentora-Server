@@ -59,11 +59,20 @@ const updateModule = async (id: string, data: object) => {
   return await ModuleModel.findByIdAndUpdate(id, payload, { new: true });
 };
 
+const deleteModule = async (id: string) => {
+  const module = await ModuleModel.findById(id);
+  if (!module) {
+    throw new AppError(404, 'Module Not Found');
+  }
+  return await ModuleModel.deleteOne({ _id: id });
+};
+
 export const moduleServices = {
   createModule,
   getModuleById,
   getAllModule,
   getModuleByCourse,
   updateModule,
+  deleteModule
 };
 
