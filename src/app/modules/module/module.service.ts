@@ -27,6 +27,15 @@ const createModule = async (data: TModule) => {
   return newModule;
 };
 
+const getModuleByCourse = async (courseId: string) => {
+
+  const course = await CourseModel.findById(courseId);
+  if (!course) {
+    throw new AppError(404, 'Course not found');
+  }
+  return await ModuleModel.find({ courseId });
+};
+
 // Service function to retrieve a single module by ID.
 const getModuleById = async (id: string) => {
   return await ModuleModel.findById(id);
@@ -41,5 +50,6 @@ export const moduleServices = {
   createModule,
   getModuleById,
   getAllModule,
+  getModuleByCourse,
 };
 

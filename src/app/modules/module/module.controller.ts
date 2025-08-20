@@ -8,29 +8,26 @@ const createModule = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to create a new module and get the result
   const result = await moduleServices.createModule(req.body);
   // Send a success response with the created resource data
-    sendResponse(res, {
+  sendResponse(res, {
     message: 'New Module created Successfully',
     data: result,
   });
 });
 
-
-
 // Controller function to handle the retrieval of a single module by ID.
- const getSingleModule = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  // Call the service method to get the module by ID and get the result
-  const result = await moduleServices.getModuleById(id);
+const getSingleModule = catchAsync(async (req: Request, res: Response) => {
+  const { courseId } = req.params;
+  // Call the service method to get the module by courseId and get the result
+  const result = await moduleServices.getModuleById(courseId);
   // Send a success response with the retrieved resource data
-   sendResponse(res, {
+  sendResponse(res, {
     message: 'Module Retrieved Successfully',
     data: result,
   });
 });
 
-
 // Controller function to handle the retrieval of multiple module.
- const getAllModule = catchAsync(async (req: Request, res: Response) => {
+const getAllModule = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to get multiple module based on query parameters and get the result
   const result = await moduleServices.getAllModule(req.query);
   // Send a success response with the retrieved resources data
@@ -40,9 +37,21 @@ const createModule = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getModuleByCourse = catchAsync(async (req: Request, res: Response) => {
+  const { courseId } = req.params;
+  // Call the service method to get the module by ID and get the result
+  const result = await moduleServices.getModuleByCourse(courseId);
+  // Send a success response with the retrieved resource data
+  sendResponse(res, {
+    message: 'Module For Specific Course Retrieved Successfully',
+    data: result,
+  });
+});
 
 export const moduleControllers = {
   createModule,
   getSingleModule,
   getAllModule,
-}
+  getModuleByCourse,
+};
+
