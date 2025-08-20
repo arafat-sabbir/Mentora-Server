@@ -1,3 +1,9 @@
+import { Types } from 'mongoose';
+
 export interface TModule {
-  // Add fields as needed
+  title: string;
+  moduleNumber: number; // auto-increment per course
+  courseId: Types.ObjectId; // reference to Course
+  isActive: boolean;
 }
+

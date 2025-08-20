@@ -1,17 +1,22 @@
 import { Router } from 'express';
 import userRoutes from '../modules/user/user.route';
 import courseRoutes from '../modules/course/course.route';
+import moduleRoutes from '../modules/module/module.route';
 
 const router = Router();
 
 const routes = [
   {
-    path: '/user',
+    path: '/auth',
     route: userRoutes,
   },
   {
-    path: '/course',
+    path: '/courses',
     route: courseRoutes,
+  },
+  {
+    path: '/modules',
+    route: moduleRoutes,
   },
 ];
 

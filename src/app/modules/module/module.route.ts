@@ -7,11 +7,19 @@ import { moduleControllers } from './module.controller';
 import validateRequest from '../../middlewares/validateRequest';
 import { moduleValidation } from './module.validation';
 
-
 // Initialize router
 const router = Router();
 
-router.post("/create-module",validateRequest(moduleValidation.createModuleSchema), moduleControllers.createModule);
+router.post(
+  '/:id',
+  (req, res, next) => {
+    req.body.courseId = req.params.id;
+    next();
+  },
+  validateRequest(moduleValidation.createModuleSchema),
+  moduleControllers.createModule
+);
 
 const moduleRoutes = router;
 export default moduleRoutes;
+
