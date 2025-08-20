@@ -18,8 +18,12 @@ const createUser = async (data: TUser) => {
 };
 
 // Service function to retrieve a single user by ID.
-const getUserById = async (id: string) => {
-  return await UserModel.findById(id);
+const getCurrentUser = async (id: string) => {
+  const user = await UserModel.findById(id);
+  if (!user) {
+    throw new AppError(404, 'User Not Found');
+  }
+  return user;
 };
 
 // Service function to retrieve multiple user based on query parameters.
@@ -67,7 +71,7 @@ const loginUser = async (payload: { email: string; password: string }) => {
 
 export const userServices = {
   createUser,
-  getUserById,
+  getCurrentUser,
   loginUser,
   getAllUser,
 };

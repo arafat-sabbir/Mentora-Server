@@ -25,10 +25,10 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 // Controller function to handle the retrieval of a single user by ID.
-const getSingleUser = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
+const getCurrentUser = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.user;
   // Call the service method to get the user by ID and get the result
-  const result = await userServices.getUserById(id);
+  const result = await userServices.getCurrentUser(id);
   // Send a success response with the retrieved resource data
   sendResponse(res, {
     message: 'User Retrieved Successfully',
@@ -49,7 +49,7 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
 
 export const userControllers = {
   createUser,
-  getSingleUser,
+  getCurrentUser,
   loginUser,
   getAllUser,
 };
