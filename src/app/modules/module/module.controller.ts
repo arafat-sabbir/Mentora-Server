@@ -48,10 +48,22 @@ const getModuleByCourse = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateModule = catchAsync(async (req: Request, res: Response) => {
+  const { moduleId } = req.params;
+  // Call the service method to get the module by ID and get the result
+  const result = await moduleServices.updateModule(moduleId, req.body);
+  // Send a success response with the retrieved resource data
+  sendResponse(res, {
+    message: 'Module Updated Successfully',
+    data: result,
+  });
+});
+
 export const moduleControllers = {
   createModule,
   getSingleModule,
   getAllModule,
   getModuleByCourse,
+  updateModule,
 };
 

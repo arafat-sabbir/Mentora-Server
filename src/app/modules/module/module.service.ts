@@ -28,7 +28,6 @@ const createModule = async (data: TModule) => {
 };
 
 const getModuleByCourse = async (courseId: string) => {
-
   const course = await CourseModel.findById(courseId);
   if (!course) {
     throw new AppError(404, 'Course not found');
@@ -46,10 +45,25 @@ const getAllModule = async (query: object) => {
   return await ModuleModel.find(query);
 };
 
+const updateModule = async (id: string, data: object) => {
+  const module = await ModuleModel.findById(id);
+  if (!module) {
+    throw new AppError(404, 'Module Not Found');
+  }
+  const payload: Record<string, unknown> = {};
+  Object.entries(data).forEach(([key, value]) => {
+    if (value && value !== '') {
+      payload[key] = value;
+    }
+  });
+  return await ModuleModel.findByIdAndUpdate(id, payload, { new: true });
+};
+
 export const moduleServices = {
   createModule,
   getModuleById,
   getAllModule,
   getModuleByCourse,
+  updateModule,
 };
 

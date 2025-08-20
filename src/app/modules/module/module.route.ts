@@ -44,6 +44,22 @@ router.get(
   moduleControllers.getModuleByCourse
 );
 
+/**
+ * @description Get Module by ID
+ * @param {string} path - '/api/modules/:id'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Admin)']
+ * @param {function} controller - ['getModuleById']
+ * @returns {object} - router
+ * @access private
+ * @method GET
+ */
+router.put(
+  '/:moduleId',
+  AuthorizeRequest(UserRoleEnum.Admin),
+  validateRequest(moduleValidation.updateModuleSchema),
+  moduleControllers.updateModule
+);
+
 const moduleRoutes = router;
 export default moduleRoutes;
 
