@@ -77,7 +77,27 @@ router.get('/', AuthorizeRequest(UserRoleEnum.Admin), courseControllers.getAllCo
  * @method POST
  */
 
-router.get('/:id', AuthorizeRequest(UserRoleEnum.Admin), courseControllers.getSingleCourse);
+router.put(
+  '/:id',
+  AuthorizeRequest(UserRoleEnum.Admin),
+  upload.single('thumbnail') as any,
+  convertFilePath,
+  (req, _, next) => {
+    if (req) {
+      if (req.file) {
+        req.body.thumbnail = req.file?.path;
+      }
+      req.body = {
+        ...req.body,
+        thumbnail: req.file?.path,
+        createdBy: req.user.id,
+      };
+    }
+    next();
+  },
+  validateRequest(courseValidation.updateCourseSchema),
+  courseControllers.updateCourse
+);
 
 const courseRoutes = router;
 export default courseRoutes;

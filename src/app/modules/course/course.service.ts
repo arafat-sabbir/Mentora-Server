@@ -13,6 +13,28 @@ const createCourse = async (data: TCourse) => {
   return newCourse;
 };
 
+// Service function to update a course by ID.
+
+const updateCourse = async (id: string, data: TCourse) => {
+  const payload: Record<string, any> = {};
+
+  const courseExist = await CourseModel.findById(id);
+  if (!courseExist) {
+    throw new AppError(404, 'Course Not Found');
+  }
+  Object.entries(data).forEach(([key, value]) => {
+    if (value && value !== '') {
+      payload[key] = value;
+    }
+  });
+
+  const course = await CourseModel.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
+
+  return course;
+};
+
 // Service function to retrieve a single course by ID.
 const getCourseById = async (id: string) => {
   const course = await CourseModel.findById(id);
@@ -22,7 +44,7 @@ const getCourseById = async (id: string) => {
   return course;
 };
 
-// Service function to retrieve multiple course based on query parameters.
+// Service function to retrieve single course based on query parameters.
 const getAllCourse = async (query: object) => {
   return await CourseModel.find(query);
 };
@@ -31,5 +53,6 @@ export const courseServices = {
   createCourse,
   getCourseById,
   getAllCourse,
+  updateCourse,
 };
 
