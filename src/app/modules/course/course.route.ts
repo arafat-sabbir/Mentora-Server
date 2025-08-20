@@ -1,5 +1,4 @@
 // Import Router from express
-// Import Router from express
 import { Router } from 'express';
 
 // Import controller from corresponding module
@@ -14,10 +13,20 @@ import convertFilePath from '../../utils/convertFilePath';
 // Initialize router
 const router = Router();
 
+/**
+ * @description Create A New Course
+ * @param {string} path - '/api/course'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Admin)']
+ * @param {function} validator - ['validateRequest(courseValidation.createCourseSchema)']
+ * @param {function} controller - ['createCourse']
+ * @returns {object} - router
+ * @access private
+ * @method POST
+ */
 router.post(
   '/',
   AuthorizeRequest(UserRoleEnum.Admin),
-  upload.single('thumbnail'),
+  upload.single('thumbnail') as any,
   convertFilePath,
   (req, _, next) => {
     if (req) {
@@ -33,6 +42,32 @@ router.post(
   validateRequest(courseValidation.createCourseSchema),
   courseControllers.createCourse
 );
+
+/**
+ * @description Get All Course
+ * @param {string} path - '/api/course'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Admin)']
+ * @param {function} controller - ['getAllCourse']
+ * @returns {object} - router
+ * @access public
+ * @method POST
+ */
+
+router.get('/', AuthorizeRequest(UserRoleEnum.Admin), courseControllers.getAllCourse);
+
+
+
+/**
+ * @description Get All Course
+ * @param {string} path - '/api/course'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Admin)']
+ * @param {function} controller - ['getAllCourse']
+ * @returns {object} - router
+ * @access public
+ * @method POST
+ */
+
+router.get('/', AuthorizeRequest(UserRoleEnum.Admin), courseControllers.getAllCourse);
 
 const courseRoutes = router;
 export default courseRoutes;
