@@ -1,3 +1,8 @@
+import { Types } from 'mongoose';
+
 export interface TPdfnote {
-  // Add fields as needed
+  title: string;
+  pdfUrl: string;
+  lectureId: Types.ObjectId; // reference to Lecture
 }
+

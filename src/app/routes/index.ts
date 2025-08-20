@@ -3,6 +3,7 @@ import userRoutes from '../modules/user/user.route';
 import courseRoutes from '../modules/course/course.route';
 import moduleRoutes from '../modules/module/module.route';
 import lectureRoutes from '../modules/lecture/lecture.route';
+import pdfnoteRoutes from '../modules/pdfnote/pdfnote.route';
 
 const router = Router();
 
@@ -22,6 +23,10 @@ const routes = [
   {
     path: '/lectures',
     route: lectureRoutes,
+  },
+  {
+    path: '/pdfNotes',
+    route: pdfnoteRoutes,
   },
 ];
 
