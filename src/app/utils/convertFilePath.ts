@@ -1,23 +1,35 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { NextFunction, Response } from "express";
+import { Request, Response, NextFunction } from 'express';
 
-// Middleware to convert file path to a URL-friendly path
-const convertFilePath = (req:any, res:Response, next:NextFunction) => {
+const convertFilePath = (req: Request, res: Response, next: NextFunction) => {
+  // Handle single file upload (req.file)
   if (req.file) {
     const fullPath = req.file.path;
     const relativePath = fullPath.split('public')[1];
-    req.file.path = relativePath.replace(/\\/g, '/'); // Save the URL-friendly path
+    req.file.path = relativePath.replace(/\\/g, '/'); // /uploads/filename.png
   }
 
-  if (req.files && Array.isArray(req.files)) {
-    req.files.forEach((file:any) => {
-      const fullPath = file.path;
-      const relativePath = fullPath.split('public')[1];
-      file.path = relativePath.replace(/\\/g, '/');
-    });
+  // Handle multiple files (req.files)
+  if (req.files) {
+    if (Array.isArray(req.files)) {
+      // When upload.array() was used
+      req.files.forEach((file) => {
+        const fullPath = file.path;
+        const relativePath = fullPath.split('public')[1];
+        file.path = relativePath.replace(/\\/g, '/');
+      });
+    } else {
+      // When upload.fields() was used → req.files is an object
+      Object.values(req.files).forEach((fileArray) => {
+        fileArray.forEach((file: Express.Multer.File) => {
+          const fullPath = file.path;
+          const relativePath = fullPath.split('public')[1];
+          file.path = relativePath.replace(/\\/g, '/');
+        });
+      });
+    }
   }
 
-  next(); // Proceed to the next middleware/controller
+  next(); // Continue
 };
 
 export default convertFilePath;

@@ -17,21 +17,18 @@ const AuthorizeRequest = (...roles: string[]) => {
     const token = req.headers.authorization?.split(' ')[1];
     // If no token is provided, throw an unauthorized error
     if (!token) {
-      throw new AppError(401, 'Unauthorized Access');
+      throw new AppError(401, 'Unauthorized Access No Token');
     }
-    try {
-      const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
-      req.user = decoded;
-      const { id, role, iat } = decoded;
-      if (roles.length > 0 && !roles.includes(decoded?.role)) {
-        throw new AppError(401, 'Unauthorized Access');
-      }
-      const user = await UserModel.findById(id);
-      if (!user) {
-        throw new Error('User not found');
-      }
-    } catch (error: any) {
-      throw new AppError(401, 'Unauthorized Access');
+    const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
+    req.user = decoded;
+    console.log(decoded, 'decoded user');
+    const { id, role } = decoded;
+    if (roles.length > 0 && !roles.includes(decoded?.role)) {
+      throw new AppError(401, 'You Are Not Allowed To Access To Resource');
+    }
+    const user = await UserModel.findOne({ _id: id });
+    if (!user && decoded.role !== role) {
+      throw new AppError(404, 'User not found');
     }
     next();
   });
