@@ -37,13 +37,24 @@ const getAllCourse = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// Controller function to handle the update course.
+// Controller function to handle update course.
 const updateCourse = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to get multiple course based on query parameters and get the result
   const result = await courseServices.updateCourse(req.params.id, req.body);
   // Send a success response with the retrieved updated data
   sendResponse(res, {
-    message: 'Courses Retrieved Successfully',
+    message: 'Courses Updated Successfully',
+    data: result,
+  });
+});
+
+// Controller function to handle delete course.
+const deleteCourse = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to get multiple course based on query parameters and get the result
+  const result = await courseServices.deleteCourse(req.params.id);
+  // Send a success response with the retrieved updated data
+  sendResponse(res, {
+    message: 'Courses Deleted Successfully',
     data: result,
   });
 });
@@ -53,5 +64,6 @@ export const courseControllers = {
   getSingleCourse,
   getAllCourse,
   updateCourse,
+  deleteCourse,
 };
 

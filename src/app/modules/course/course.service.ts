@@ -49,10 +49,20 @@ const getAllCourse = async (query: object) => {
   return await CourseModel.find(query);
 };
 
+// Service function to retrieve single course based on query parameters.
+const deleteCourse = async (id: string) => {
+  const course = await CourseModel.findById(id);
+  if (!course) {
+    throw new AppError(404, 'Course Not Found');
+  }
+  return await CourseModel.deleteOne({ _id: id });
+};
+
 export const courseServices = {
   createCourse,
   getCourseById,
   getAllCourse,
   updateCourse,
+  deleteCourse,
 };
 
