@@ -1,5 +1,6 @@
 // Import the model
 import AppError from '../../errors/AppError';
+import deleteFileIfExists from '../../utils/deleteFileIsExist';
 import { TCourse } from './course.interface';
 import CourseModel from './course.model';
 
@@ -27,7 +28,9 @@ const updateCourse = async (id: string, data: TCourse) => {
       payload[key] = value;
     }
   });
-
+  if (courseExist.thumbnail) {
+    await deleteFileIfExists(courseExist.thumbnail);
+  }
   const course = await CourseModel.findByIdAndUpdate(id, payload, {
     new: true,
   });
@@ -54,6 +57,10 @@ const deleteCourse = async (id: string) => {
   const course = await CourseModel.findById(id);
   if (!course) {
     throw new AppError(404, 'Course Not Found');
+  }
+  // Delete old thumbnail if a new one is provided
+  if (course.thumbnail) {
+    await deleteFileIfExists(course.thumbnail);
   }
   return await CourseModel.deleteOne({ _id: id });
 };
