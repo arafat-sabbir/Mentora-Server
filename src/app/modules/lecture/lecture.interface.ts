@@ -1,3 +1,10 @@
+import { Types } from 'mongoose';
+
 export interface TLecture {
-  // Add fields as needed
+  title: string;
+  videoUrl: string; // YouTube embed URL or uploaded video path
+  moduleId: Types.ObjectId; // reference to Module
+  lectureNumber: number; // order within module
+  isActive: boolean;
 }
+
