@@ -15,7 +15,11 @@ const createCourse = async (data: TCourse) => {
 
 // Service function to retrieve a single course by ID.
 const getCourseById = async (id: string) => {
-  return await CourseModel.findById(id);
+  const course = await CourseModel.findById(id);
+  if (!course) {
+    throw new AppError(404, 'Course Not Found');
+  }
+  return course;
 };
 
 // Service function to retrieve multiple course based on query parameters.
