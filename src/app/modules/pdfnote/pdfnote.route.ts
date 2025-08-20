@@ -42,6 +42,18 @@ router.get(
   pdfnoteControllers.getPdfNotesByLecture
 );
 
+/**
+ * @description Get all pdfNotes by lecture ID
+ * @route GET /api/lectures/:lectureId
+ * @access Private (Admin)
+ * @param {string} lectureId - lecture ID
+ */
+router.delete(
+  '/:pdfNoteId',
+  AuthorizeRequest(UserRoleEnum.Admin),
+  pdfnoteControllers.deletePdfNotes
+);
+
 const pdfnoteRoutes = router;
 export default pdfnoteRoutes;
 

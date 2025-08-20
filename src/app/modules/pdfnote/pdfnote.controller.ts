@@ -48,10 +48,22 @@ const getPdfNotesByLecture = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const deletePdfNotes = catchAsync(async (req: Request, res: Response) => {
+  const { pdfNoteId } = req.params;
+  // Call the service method to get the lecture by lectureId and get the result
+  const result = await pdfnoteServices.deletePdfNotes(pdfNoteId);
+  // Send a success response with the retrieved resource data
+  sendResponse(res, {
+    message: 'Pdf Notes Delete Successfully',
+    data: result,
+  });
+});
+
 export const pdfnoteControllers = {
   createPdfnote,
   getSinglePdfnote,
   getAllPdfnote,
   getPdfNotesByLecture,
+  deletePdfNotes,
 };
 
