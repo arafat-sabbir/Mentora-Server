@@ -30,6 +30,18 @@ router.post(
   pdfnoteControllers.createPdfnote
 );
 
+/**
+ * @description Get all pdfNotes by lecture ID
+ * @route GET /api/lectures/:lectureId
+ * @access Private (Admin, Student)
+ * @param {string} lectureId - lecture ID
+ */
+router.get(
+  '/:lectureId',
+  AuthorizeRequest(UserRoleEnum.Admin, UserRoleEnum.Student),
+  pdfnoteControllers.getPdfNotesByLecture
+);
+
 const pdfnoteRoutes = router;
 export default pdfnoteRoutes;
 
