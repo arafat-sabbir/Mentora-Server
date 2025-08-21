@@ -1,12 +1,25 @@
 // Import the model
-import EnrollmentModel from './enrollment.model'; 
+import AppError from '../../errors/AppError';
+import CourseModel from '../course/course.model';
+import { TEnrollment } from './enrollment.interface';
+import EnrollmentModel from './enrollment.model';
 
 // Service function to create a new enrollment.
-const createEnrollment = async (data: object) => {
+const enrollNewStudent = async (data: Partial<TEnrollment>) => {
+  const course = await CourseModel.findById(data.courseId);
+  if (!course) {
+    throw new AppError(404, 'Course Not Found');
+  }
+  const enrollmentExist = await EnrollmentModel.findOne({
+    courseId: data.courseId,
+    userId: data.userId,
+  });
+  if (enrollmentExist) {
+    throw new AppError(400, 'You Are Already Enrolled In This Course');
+  }
   const newEnrollment = await EnrollmentModel.create(data);
   return newEnrollment;
 };
-
 
 // Service function to retrieve a single enrollment by ID.
 const getEnrollmentById = async (id: string) => {
@@ -19,7 +32,8 @@ const getAllEnrollment = async (query: object) => {
 };
 
 export const enrollmentServices = {
-  createEnrollment,
+  enrollNewStudent,
   getEnrollmentById,
   getAllEnrollment,
 };
+

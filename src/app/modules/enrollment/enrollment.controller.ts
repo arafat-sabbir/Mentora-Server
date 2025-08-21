@@ -4,33 +4,33 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 
 // Controller function to handle the creation of a single Enrollment.
-const createEnrollment = catchAsync(async (req: Request, res: Response) => {
+const enrollNewStudent = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to create a new enrollment and get the result
-  const result = await enrollmentServices.createEnrollment(req.body);
+  const result = await enrollmentServices.enrollNewStudent({
+    userId: req.user.id,
+    courseId: req.body?.courseId,
+  });
   // Send a success response with the created resource data
-    sendResponse(res, {
-    message: 'New Enrollment created Successfully',
+  sendResponse(res, {
+    message: 'Successfully enrolled in course"',
     data: result,
   });
 });
 
-
-
 // Controller function to handle the retrieval of a single enrollment by ID.
- const getSingleEnrollment = catchAsync(async (req: Request, res: Response) => {
+const getSingleEnrollment = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   // Call the service method to get the enrollment by ID and get the result
   const result = await enrollmentServices.getEnrollmentById(id);
   // Send a success response with the retrieved resource data
-   sendResponse(res, {
+  sendResponse(res, {
     message: 'Enrollment Retrieved Successfully',
     data: result,
   });
 });
 
-
 // Controller function to handle the retrieval of multiple enrollment.
- const getAllEnrollment = catchAsync(async (req: Request, res: Response) => {
+const getAllEnrollment = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to get multiple enrollment based on query parameters and get the result
   const result = await enrollmentServices.getAllEnrollment(req.query);
   // Send a success response with the retrieved resources data
@@ -40,9 +40,9 @@ const createEnrollment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
 export const enrollmentControllers = {
-  createEnrollment,
+  enrollNewStudent,
   getSingleEnrollment,
   getAllEnrollment,
-}
+};
+
