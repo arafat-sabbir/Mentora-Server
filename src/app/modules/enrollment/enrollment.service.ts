@@ -31,9 +31,16 @@ const getAllEnrollment = async (query: object) => {
   return await EnrollmentModel.find(query);
 };
 
+// Service function to retrieve multiple enrollment based on query parameters.
+const getAllStudentEnrollments = async (userId: Pick<TEnrollment, 'userId'>) => {
+  const result = await EnrollmentModel.find({ userId: userId }).populate('Course');
+  return result;
+};
+
 export const enrollmentServices = {
   enrollNewStudent,
   getEnrollmentById,
   getAllEnrollment,
+  getAllStudentEnrollments,
 };
 

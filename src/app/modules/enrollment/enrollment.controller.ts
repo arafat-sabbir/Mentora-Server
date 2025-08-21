@@ -40,9 +40,21 @@ const getAllEnrollment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Controller function to handle the retrieval of multiple enrollment.
+const getAllStudentEnrollments = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to get multiple enrollment based on query parameters and get the result
+  const result = await enrollmentServices.getAllStudentEnrollments(req.user.id);
+  // Send a success response with the retrieved resources data
+  sendResponse(res, {
+    message: 'Enrollments Retrieved Successfully',
+    data: result,
+  });
+});
+
 export const enrollmentControllers = {
   enrollNewStudent,
   getSingleEnrollment,
   getAllEnrollment,
+  getAllStudentEnrollments,
 };
 
