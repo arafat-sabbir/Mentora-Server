@@ -56,18 +56,6 @@ router.post(
 router.get('/', AuthorizeRequest(UserRoleEnum.Admin), courseControllers.getAllCourse);
 
 /**
- * @description Get All Course
- * @param {string} path - '/api/course'
- * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Admin)']
- * @param {function} controller - ['getAllCourse']
- * @returns {object} - router
- * @access private
- * @method GET
- */
-
-router.get('/', AuthorizeRequest(UserRoleEnum.Admin), courseControllers.getAllCourse);
-
-/**
  * @description Update Single Course
  * @param {string} path - '/api/course/:id'
  * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Admin)']
@@ -110,6 +98,30 @@ router.put(
  */
 
 router.delete('/:id', AuthorizeRequest(UserRoleEnum.Admin), courseControllers.deleteCourse);
+
+/**
+ * @description delete single Course
+ * @param {string} path - '/api/course/:id'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Admin)']
+ * @param {function} controller - ['deleteCourse']
+ * @returns {object} - router
+ * @access private
+ * @method DELETE
+ */
+
+router.get('/public', courseControllers.getAllCourse);
+
+/**
+ * @description Get Single Course
+ * @param {string} path - '/api/course'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Admin)']
+ * @param {function} controller - ['getAllCourse']
+ * @returns {object} - router
+ * @access private
+ * @method GET
+ */
+
+router.get('/public/:id', courseControllers.getSingleCourse);
 
 const courseRoutes = router;
 export default courseRoutes;
