@@ -12,13 +12,13 @@ import { UserRoleEnum } from '../../constant/user';
 // Initialize router
 const router = Router();
 /**
- * @description Get All Public Course
- * @param {string} path - '/api/course/public'
- * @param {function} authorize - ['AuthorizeRequest()']
- * @param {function} controller - ['getAllCourse']
+ * @description Enroll a new Student
+ * @param {string} path - '/api/enrollments'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Student)']
+ * @param {function} controller - ['enrollNewStudent']
  * @returns {object} - router
  * @access public
- * @method GET
+ * @method POST
  */
 router.post(
   '/',
@@ -28,18 +28,34 @@ router.post(
 );
 
 /**
- * @description Get All Public Course
- * @param {string} path - '/api/course/public'
- * @param {function} authorize - ['AuthorizeRequest()']
- * @param {function} controller - ['getAllCourse']
+ * @description Get all enrollments for a student
+ * @param {string} path - '/api/enrollments/student'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Student)']
+ * @param {function} controller - ['getAllStudentEnrollments']
  * @returns {object} - router
- * @access public
+ * @access private
  * @method GET
  */
 router.get(
   '/student',
   AuthorizeRequest(UserRoleEnum.Student),
   enrollmentControllers.getAllStudentEnrollments
+);
+
+/**
+ * @description Get all enrollments for a student
+ * @param {string} path - '/api/enrollments/student'
+ * @param {function} authorize - ['AuthorizeRequest(UserRoleEnum.Student)']
+ * @param {function} controller - ['getAllStudentEnrollments']
+ * @returns {object} - router
+ * @access private
+ * @method GET
+ */
+router.get(
+  '/enrolled-courses/:courseId',
+  AuthorizeRequest(UserRoleEnum.Student),
+  validateRequest(enrollmentValidation.getEnrolledCourseContentSchema),
+  enrollmentControllers.getEnrolledCourseContent
 );
 
 const enrollmentRoutes = router;
