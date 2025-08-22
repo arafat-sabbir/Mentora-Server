@@ -70,6 +70,17 @@ const deleteLecture = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getLectureContent = catchAsync(async (req: Request, res: Response) => {
+  const { lectureId } = req.params;
+  // Call the service method to get the lecture by ID and get the result
+  const result = await lectureServices.getLectureContent(req.user.id, lectureId);
+  // Send a success response with the retrieved resource data
+  sendResponse(res, {
+    message: 'Lecture Content Retrieved Successfully',
+    data: result,
+  });
+});
+
 export const lectureControllers = {
   createLecture,
   getSingleLecture,
@@ -77,5 +88,6 @@ export const lectureControllers = {
   getLectureByModule,
   updateLecture,
   deleteLecture,
+  getLectureContent,
 };
 

@@ -1,7 +1,10 @@
 // Import the model
+import { Types } from 'mongoose';
 import AppError from '../../errors/AppError';
 import CourseModel from '../course/course.model';
 import ModuleModel from '../module/module.model';
+import PdfnoteModel from '../pdfnote/pdfnote.model';
+import UserProgressModel from '../user-progress/user-progress.model';
 import { TLecture } from './lecture.interface';
 import LectureModel from './lecture.model';
 
@@ -70,6 +73,247 @@ const deleteLecture = async (id: string) => {
   return await LectureModel.deleteOne({ _id: id });
 };
 
+// import { AppError } from "../utils/AppError"; // use your own error helper
+
+type ObjectIdString = string;
+
+export const getLectureContent = async (userId: ObjectIdString, lectureId: ObjectIdString) => {
+  const lectureObjId = new Types.ObjectId(lectureId);
+  const userObjId = new Types.ObjectId(userId);
+
+  // Use actual collection names from your models to avoid hard-coding
+  const MODULES = ModuleModel.collection.name; // "modules"
+  const COURSES = CourseModel.collection.name; // "courses"
+  const LECTURES = LectureModel.collection.name; // "lectures"
+  const PDFNOTES = PdfnoteModel.collection.name; // "pdfnotes"
+  const USERPROGRESS = UserProgressModel.collection.name; // "userprogresses"
+
+  const result = await LectureModel.aggregate([
+    // 1) start with this lecture
+    { $match: { _id: lectureObjId } },
+
+    // 2) join module
+    {
+      $lookup: {
+        from: MODULES,
+        localField: 'moduleId',
+        foreignField: '_id',
+        as: 'module',
+      },
+    },
+    { $unwind: '$module' },
+
+    // 3) join course via module.courseId
+    {
+      $lookup: {
+        from: COURSES,
+        localField: 'module.courseId',
+        foreignField: '_id',
+        as: 'course',
+      },
+    },
+    { $unwind: '$course' },
+
+    // 4) gather pdf notes for this lecture
+    {
+      $lookup: {
+        from: PDFNOTES,
+        let: { lectureId: '$_id' },
+        pipeline: [
+          { $match: { $expr: { $eq: ['$lectureId', '$$lectureId'] } } },
+          {
+            $project: {
+              _id: 1,
+              title: 1,
+              filePath: '$pdfUrl',
+              fileName: { $last: { $split: ['$pdfUrl', '/'] } }, // derive a filename from URL/path
+            },
+          },
+        ],
+        as: 'pdfNotes',
+      },
+    },
+
+    // 5) find NEXT lecture in same module (lectureNumber > current)
+    {
+      $lookup: {
+        from: LECTURES,
+        let: { modId: '$module._id', currNo: '$lectureNumber' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [{ $eq: ['$moduleId', '$$modId'] }, { $gt: ['$lectureNumber', '$$currNo'] }],
+              },
+            },
+          },
+          { $sort: { lectureNumber: 1 } },
+          { $limit: 1 },
+          { $project: { _id: 1, title: 1 } },
+        ],
+        as: 'nextLecture',
+      },
+    },
+
+    // 6) find PREVIOUS lecture in same module (lectureNumber < current)
+    {
+      $lookup: {
+        from: LECTURES,
+        let: { modId: '$module._id', currNo: '$lectureNumber' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [{ $eq: ['$moduleId', '$$modId'] }, { $lt: ['$lectureNumber', '$$currNo'] }],
+              },
+            },
+          },
+          { $sort: { lectureNumber: -1 } },
+          { $limit: 1 },
+          { $project: { _id: 1, title: 1 } },
+        ],
+        as: 'previousLecture',
+      },
+    },
+
+    // 7) current lecture progress (for this user)
+    {
+      $lookup: {
+        from: USERPROGRESS,
+        let: { lecId: '$_id', uId: userObjId, cId: '$module.courseId' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$lectureId', '$$lecId'] },
+                  { $eq: ['$userId', '$$uId'] },
+                  { $eq: ['$courseId', '$$cId'] },
+                ],
+              },
+            },
+          },
+          { $project: { isCompleted: 1 } },
+        ],
+        as: 'progress',
+      },
+    },
+
+    // 8) previous lecture progress (to compute isUnlocked)
+    {
+      $lookup: {
+        from: USERPROGRESS,
+        let: {
+          prevId: { $arrayElemAt: ['$previousLecture._id', 0] },
+          uId: userObjId,
+          cId: '$module.courseId',
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$lectureId', '$$prevId'] },
+                  { $eq: ['$userId', '$$uId'] },
+                  { $eq: ['$courseId', '$$cId'] },
+                  { $eq: ['$isCompleted', true] },
+                ],
+              },
+            },
+          },
+          { $limit: 1 },
+        ],
+        as: 'prevProgress',
+      },
+    },
+
+    // 9) compute booleans and normalize next/prev structures
+    {
+      $addFields: {
+        // true if any progress doc has isCompleted === true
+        isCompleted: {
+          $anyElementTrue: {
+            $map: {
+              input: '$progress',
+              as: 'p',
+              in: '$$p.isCompleted',
+            },
+          },
+        },
+
+        // unlock rule: no previous lecture OR previous lecture completed
+        isUnlocked: {
+          $cond: [
+            {
+              $or: [
+                { $eq: [{ $size: '$previousLecture' }, 0] },
+                { $gt: [{ $size: '$prevProgress' }, 0] },
+              ],
+            },
+            true,
+            false,
+          ],
+        },
+
+        // squash arrays into single objects or null, and add nextLecture.isUnlocked
+        nextLecture: {
+          $cond: [
+            { $gt: [{ $size: '$nextLecture' }, 0] },
+            {
+              $mergeObjects: [
+                { $arrayElemAt: ['$nextLecture', 0] },
+                { isUnlocked: true }, // or your own rule
+              ],
+            },
+            null,
+          ],
+        },
+        previousLecture: {
+          $cond: [
+            { $gt: [{ $size: '$previousLecture' }, 0] },
+            { $arrayElemAt: ['$previousLecture', 0] },
+            null,
+          ],
+        },
+      },
+    },
+
+    // 10) final shape
+    {
+      $project: {
+        _id: 1,
+        title: 1,
+        videoUrl: 1,
+        lectureNumber: 1,
+        module: {
+          _id: '$module._id',
+          title: '$module.title',
+          moduleNumber: '$module.moduleNumber',
+        },
+        course: {
+          _id: '$course._id',
+          title: '$course.title',
+        },
+        pdfNotes: 1,
+        isUnlocked: 1,
+        isCompleted: 1,
+        nextLecture: 1,
+        previousLecture: 1,
+      },
+    },
+  ]);
+
+  if (!result.length) {
+    // throw new AppError(404, "Lecture Not Found");
+    const e = new Error('Lecture Not Found');
+    // @ts-ignore
+    e.statusCode = 404;
+    throw e;
+  }
+
+  return result[0];
+};
+
 export const lectureServices = {
   createLecture,
   getLectureById,
@@ -77,5 +321,6 @@ export const lectureServices = {
   getLectureByModule,
   updateLecture,
   deleteLecture,
+  getLectureContent
 };
 

@@ -71,6 +71,19 @@ router.delete(
   lectureControllers.deleteLecture
 );
 
+
+/**
+ * @description Delete Lecture by ID
+ * @route DELETE /api/lectures/:lectureId
+ * @access Private (Admin only)
+ * @param {string} lectureId - Lecture ID
+ */
+router.get(
+  '/content/:lectureId',
+  AuthorizeRequest(UserRoleEnum.Student),
+  lectureControllers.getLectureContent
+);
+
 const lectureRoutes = router;
 export default lectureRoutes;
 
