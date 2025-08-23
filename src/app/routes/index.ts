@@ -5,6 +5,7 @@ import moduleRoutes from '../modules/module/module.route';
 import lectureRoutes from '../modules/lecture/lecture.route';
 import pdfnoteRoutes from '../modules/pdfnote/pdfnote.route';
 import enrollmentRoutes from '../modules/enrollment/enrollment.route';
+import userProgressRoutes from '../modules/user-progress/user-progress.route';
 
 const router = Router();
 
@@ -32,6 +33,10 @@ const routes = [
   {
     path: '/enrollments',
     route: enrollmentRoutes,
+  },
+  {
+    path: '/progress',
+    route: userProgressRoutes,
   },
 ];
 

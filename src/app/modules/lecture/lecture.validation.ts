@@ -17,9 +17,7 @@ const createLectureSchema = z.object({
     title: z
       .string({ required_error: 'Title is required' })
       .min(1, { message: 'Title is required' }),
-    videoUrl: z
-      .string({ required_error: 'Video URL is required' })
-      .url({ message: 'Video URL must be a valid URL' }),
+    videoUrl: z.string({ required_error: 'Video URL is required' }),
     moduleId: z.string({ required_error: 'Course ID is required' }).refine(
       (val) => {
         return mongoose.Types.ObjectId.isValid(val);
@@ -45,7 +43,7 @@ const updateLectureSchema = z.object({
   }),
   body: z.object({
     title: z.string().optional(),
-    videoUrl: z.string().url({ message: 'Video URL must be a valid URL' }).optional(),
+    videoUrl: z.string().optional(),
     isActive: z.boolean().optional(),
   }),
 });

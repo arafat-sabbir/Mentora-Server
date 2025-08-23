@@ -59,11 +59,33 @@ const deleteCourse = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllCourseForStudent = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to get multiple course based on query parameters and get the result
+  const result = await courseServices.getAllCourseWithProgressForStudent(req.user.id, req.query);
+  // Send a success response with the retrieved resources data
+  sendResponse(res, {
+    message: 'Courses Retrieved Successfully',
+    data: result,
+  });
+});
+
+const getSingleCourseContentStudent = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to get multiple course based on query parameters and get the result
+  const result = await courseServices.getSingleCourseContent(req.params.courseId,req.user.id);
+  // Send a success response with the retrieved resources data
+  sendResponse(res, {
+    message: 'Courses Retrieved Successfully',
+    data: result,
+  });
+});
+
 export const courseControllers = {
   createCourse,
   getSingleCourse,
   getAllCourse,
   updateCourse,
+  getAllCourseForStudent,
   deleteCourse,
+  getSingleCourseContentStudent,
 };
 

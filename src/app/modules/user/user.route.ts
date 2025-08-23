@@ -12,12 +12,12 @@ import { UserRoleEnum } from '../../constant/user';
 const router = Router();
 
 router.post(
-  '/register',
+  '/signup',
   validateRequest(userValidation.registerSchema),
   userControllers.createUser
 );
 
-router.post('/login', validateRequest(userValidation.loginSchema), userControllers.loginUser);
+router.post('/signin', validateRequest(userValidation.loginSchema), userControllers.loginUser);
 
 router.get('/me', AuthorizeRequest(UserRoleEnum.Student), userControllers.getCurrentUser);
 

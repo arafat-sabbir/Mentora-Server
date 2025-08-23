@@ -28,7 +28,8 @@ const UserProgressSchema: Schema<TUserProgress> = new Schema(
     },
     completedAt: {
       type: Schema.Types.Date,
-      required: false,
+      required: true,
+      default: Date.now,
     },
     watchTime: {
       type: Schema.Types.Number,

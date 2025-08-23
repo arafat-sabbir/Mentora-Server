@@ -4,12 +4,12 @@ import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 
 // Controller function to handle the creation of a single UserProgress.
-const createUserProgress = catchAsync(async (req: Request, res: Response) => {
+const markNewProgress = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to create a new userProgress and get the result
-  const result = await userProgressServices.createUserProgress(req.body);
+  const result = await userProgressServices.markNewProgress(req.user.id, req.body);
   // Send a success response with the created resource data
   sendResponse(res, {
-    message: 'New UserProgress created Successfully',
+    message: 'Lecture marked as complete',
     data: result,
   });
 });
@@ -38,7 +38,7 @@ const getAllUserProgress = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const userProgressControllers = {
-  createUserProgress,
+  markNewProgress,
   getSingleUserProgress,
   getAllUserProgress,
 };

@@ -109,7 +109,11 @@ router.delete('/:id', AuthorizeRequest(UserRoleEnum.Admin), courseControllers.de
  * @method GET
  */
 
-router.get('/public', courseControllers.getAllCourse);
+router.get(
+  '/public',
+  AuthorizeRequest(UserRoleEnum.Student),
+  courseControllers.getAllCourseForStudent
+);
 
 /**
  * @description Get Single Public Course
@@ -121,7 +125,11 @@ router.get('/public', courseControllers.getAllCourse);
  * @method GET
  */
 
-router.get('/public/:id', courseControllers.getSingleCourse);
+router.get(
+  '/public/:courseId',
+  AuthorizeRequest(),
+  courseControllers.getSingleCourseContentStudent
+);
 
 const courseRoutes = router;
 export default courseRoutes;

@@ -21,10 +21,9 @@ const AuthorizeRequest = (...roles: string[]) => {
     }
     const decoded = jwt.verify(token, config.jwt_access_secret as string) as JwtPayload;
     req.user = decoded;
-    console.log(decoded, 'decoded user');
     const { id, role } = decoded;
     if (roles.length > 0 && !roles.includes(decoded?.role)) {
-      throw new AppError(401, 'You Are Not Allowed To Access To Resource');
+      throw new AppError(403, 'You Are Not Allowed To Access To Resource');
     }
     const user = await UserModel.findOne({ _id: id });
     if (!user && decoded.role !== role) {
